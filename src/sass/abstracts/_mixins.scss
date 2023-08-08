@@ -1,0 +1,45 @@
+@use 'sass:meta';
+@use 'sass:math';
+@use 'sass:map';
+@use 'breakpoints' as *;
+@use 'tokens' as *;
+
+// Breakpoints mixin
+@mixin mq($size) {
+  @if map.has-key($breakpoints, $size) {
+    $breakpoint: map-get($breakpoints, $size);
+    @if $size == large {
+      @media only screen and (min-width: $breakpoint) {
+        @content;
+      }
+    } @else {
+      @media only screen and (max-width: $breakpoint) {
+        @content;
+      }
+    }
+  } @else if meta.type-of($size) == number {
+    @if math.is-unitless($size) {
+      @error 'when using a number with @mq() make sure to include a unit';
+    } @else {
+      @media only screen and (max-width: $size) {
+        @content;
+      }
+    }
+  } @else {
+    @error 'the keyword #{$size} is not in the $breakpoints map';
+  }
+}
+
+// Creating headings classes
+@mixin heading($fs, $color: $heading-color-default) {
+  font-family: $heading-font-family;
+
+  font-size: $fs;
+  font-weight: $heading-font-weight;
+  line-height: $heading-line-height;
+
+  color: $color;
+
+  letter-spacing: $heading-letter-spacing;
+  text-transform: $heading-text-transform;
+}
